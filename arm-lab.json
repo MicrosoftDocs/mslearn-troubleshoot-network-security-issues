@@ -1,0 +1,749 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "connections_VNet1_VNet2_name": {
+      "type": "String",
+      "defaultValue": "VNet1-VNet2"
+    },
+    "connections_VNet2_VNet1_name": {
+      "type": "String",
+      "defaultValue": "VNet2-VNet1"
+    },
+    "networkInterfaces_vm1929_name": {
+      "type": "String",
+      "defaultValue": "networkInterfaces-vm1929"
+    },
+    "networkInterfaces_vm2645_name": {
+      "type": "String",
+      "defaultValue": "networkInterfaces-vm2645"
+    },
+    "networkSecurityGroups_VM1_nsg_name": {
+      "type": "String",
+      "defaultValue": "VM1-nsg"
+    },
+    "networkSecurityGroups_VM2_nsg_name": {
+      "type": "String",
+      "defaultValue": "VM2-nsg"
+    },
+    "publicIPAddresses_VM1_ip_name": {
+      "type": "String",
+      "defaultValue": "VM1-ip"
+    },
+    "publicIPAddresses_VM2_ip_name": {
+      "type": "String",
+      "defaultValue": "VM2-ip"
+    },
+    "publicIPAddresses_VNet1GWpip_name": {
+      "type": "String",
+      "defaultValue": "VNet1GWpip"
+    },
+    "publicIPAddresses_VNet2GWpip_name": {
+      "type": "String",
+      "defaultValue": "VNet2GWpip"
+    },
+    "schedules_shutdown_computevm_vm1_name": {
+      "type": "String",
+      "defaultValue": ""
+    },
+    "schedules_shutdown_computevm_vm2_name": {
+      "type": "String",
+      "defaultValue": ""
+    },
+    "virtualMachines_VM1_name": {
+      "type": "String",
+      "defaultValue": "VM1"
+    },
+    "virtualMachines_VM2_name": {
+      "type": "String",
+      "defaultValue": "VM2"
+    },
+    "virtualNetworkGateways_VNet1GW_name": {
+      "type": "String",
+      "defaultValue": "VNet1GW"
+    },
+    "virtualNetworkGateways_VNet2GW_name": {
+      "type": "String",
+      "defaultValue": "VNet2GW"
+    },
+    "virtualNetworks_VNet1_name": {
+      "type": "String",
+      "defaultValue": "VNet1"
+    },
+    "virtualNetworks_VNet2_name": {
+      "type": "String",
+      "defaultValue": "VNet2"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2020-11-01",
+      "location": "eastus",
+      "name": "[parameters('networkSecurityGroups_VM1_nsg_name')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "SSH",
+            "properties": {
+              "access": "Allow",
+              "destinationAddressPrefix": "*",
+              "destinationAddressPrefixes": [],
+              "destinationPortRange": "22",
+              "destinationPortRanges": [],
+              "direction": "Inbound",
+              "priority": 300,
+              "protocol": "TCP",
+              "sourceAddressPrefix": "*",
+              "sourceAddressPrefixes": [],
+              "sourcePortRange": "*",
+              "sourcePortRanges": []
+            }
+          }
+        ]
+      },
+      "type": "Microsoft.Network/networkSecurityGroups"
+    },
+    {
+      "apiVersion": "2020-11-01",
+      "location": "uksouth",
+      "name": "[parameters('networkSecurityGroups_VM2_nsg_name')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "SSH",
+            "properties": {
+              "access": "Allow",
+              "destinationAddressPrefix": "*",
+              "destinationAddressPrefixes": [],
+              "destinationPortRange": "22",
+              "destinationPortRanges": [],
+              "direction": "Inbound",
+              "priority": 300,
+              "protocol": "TCP",
+              "sourceAddressPrefix": "*",
+              "sourceAddressPrefixes": [],
+              "sourcePortRange": "*",
+              "sourcePortRanges": []
+            }
+          }
+        ]
+      },
+      "type": "Microsoft.Network/networkSecurityGroups"
+    },
+    {
+      "apiVersion": "2020-11-01",
+      "location": "eastus",
+      "name": "[parameters('publicIPAddresses_VM1_ip_name')]",
+      "properties": {
+        "idleTimeoutInMinutes": 4,
+        "ipAddress": "13.92.39.122",
+        "ipTags": [],
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Dynamic"
+      },
+      "sku": {
+        "name": "Basic",
+        "tier": "Regional"
+      },
+      "type": "Microsoft.Network/publicIPAddresses"
+    },
+    {
+      "apiVersion": "2020-11-01",
+      "location": "uksouth",
+      "name": "[parameters('publicIPAddresses_VM2_ip_name')]",
+      "properties": {
+        "idleTimeoutInMinutes": 4,
+        "ipAddress": "20.108.157.133",
+        "ipTags": [],
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Dynamic"
+      },
+      "sku": {
+        "name": "Basic",
+        "tier": "Regional"
+      },
+      "type": "Microsoft.Network/publicIPAddresses"
+    },
+    {
+      "apiVersion": "2020-11-01",
+      "location": "eastus",
+      "name": "[parameters('publicIPAddresses_VNet1GWpip_name')]",
+      "properties": {
+        "idleTimeoutInMinutes": 4,
+        "ipAddress": "20.120.22.5",
+        "ipTags": [],
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Dynamic"
+      },
+      "sku": {
+        "name": "Basic",
+        "tier": "Regional"
+      },
+      "type": "Microsoft.Network/publicIPAddresses"
+    },
+    {
+      "apiVersion": "2020-11-01",
+      "location": "uksouth",
+      "name": "[parameters('publicIPAddresses_VNet2GWpip_name')]",
+      "properties": {
+        "idleTimeoutInMinutes": 4,
+        "ipAddress": "20.108.247.205",
+        "ipTags": [],
+        "publicIPAddressVersion": "IPv4",
+        "publicIPAllocationMethod": "Dynamic"
+      },
+      "sku": {
+        "name": "Basic",
+        "tier": "Regional"
+      },
+      "type": "Microsoft.Network/publicIPAddresses"
+    },
+    {
+      "apiVersion": "2020-11-01",
+      "location": "eastus",
+      "name": "[parameters('virtualNetworks_VNet1_name')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.1.0.0/16"
+          ]
+        },
+        "enableDdosProtection": false,
+        "subnets": [
+          {
+            "name": "default",
+            "properties": {
+              "addressPrefix": "10.1.0.0/24",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          },
+          {
+            "name": "GatewaySubnet",
+            "properties": {
+              "addressPrefix": "10.1.1.0/27",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          }
+        ],
+        "virtualNetworkPeerings": []
+      },
+      "type": "Microsoft.Network/virtualNetworks"
+    },
+    {
+      "apiVersion": "2020-11-01",
+      "location": "uksouth",
+      "name": "[parameters('virtualNetworks_VNet2_name')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.4.0.0/16"
+          ]
+        },
+        "enableDdosProtection": false,
+        "subnets": [
+          {
+            "name": "default",
+            "properties": {
+              "addressPrefix": "10.4.0.0/27",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          },
+          {
+            "name": "GatewaySubnet",
+            "properties": {
+              "addressPrefix": "10.4.1.0/24",
+              "delegations": [],
+              "privateEndpointNetworkPolicies": "Enabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+          }
+        ],
+        "virtualNetworkPeerings": []
+      },
+      "type": "Microsoft.Network/virtualNetworks"
+    },
+    {
+      "apiVersion": "2021-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_vm1929_name'))]"
+      ],
+      "location": "eastus",
+      "name": "[parameters('virtualMachines_VM1_name')]",
+      "properties": {
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true
+          }
+        },
+        "hardwareProfile": {
+          "vmSize": "Standard_D2s_v3"
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_vm1929_name'))]",
+              "properties": {
+                "deleteOption": "Detach"
+              }
+            }
+          ]
+        },
+        "osProfile": {
+          "adminUsername": "azureuser",
+          "adminPassword": "azur3Pa55w.rd",
+          "allowExtensionOperations": true,
+          "computerName": "[parameters('virtualMachines_VM1_name')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": false,
+            "patchSettings": {
+              "assessmentMode": "ImageDefault",
+              "patchMode": "ImageDefault"
+            },
+            "provisionVMAgent": true
+          }
+        },
+        "storageProfile": {
+          "dataDisks": [],
+          "imageReference": {
+            "offer": "0001-com-ubuntu-server-focal",
+            "publisher": "canonical",
+            "sku": "20_04-lts-gen2",
+            "version": "latest"
+          },
+          "osDisk": {
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "deleteOption": "Delete",
+            "diskSizeGB": 30,
+            "managedDisk": {
+              "storageAccountType": "Premium_LRS"
+            },
+            "osType": "Linux"
+          }
+        }
+      },
+      "type": "Microsoft.Compute/virtualMachines"
+    },
+    {
+      "apiVersion": "2021-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_vm2645_name'))]"
+      ],
+      "location": "uksouth",
+      "name": "[parameters('virtualMachines_VM2_name')]",
+      "properties": {
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true
+          }
+        },
+        "hardwareProfile": {
+          "vmSize": "Standard_D2s_v3"
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_vm2645_name'))]",
+              "properties": {
+                "deleteOption": "Detach"
+              }
+            }
+          ]
+        },
+        "osProfile": {
+          "adminUsername": "azureuser",
+          "adminPassword": "azur3Pa55w.rd",
+          "allowExtensionOperations": true,
+          "computerName": "[parameters('virtualMachines_VM2_name')]",
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": false,
+            "patchSettings": {
+              "assessmentMode": "ImageDefault",
+              "patchMode": "ImageDefault"
+            },
+            "provisionVMAgent": true
+          }
+        },
+        "storageProfile": {
+          "dataDisks": [],
+          "imageReference": {
+            "offer": "0001-com-ubuntu-server-focal",
+            "publisher": "canonical",
+            "sku": "20_04-lts-gen2",
+            "version": "latest"
+          },
+          "osDisk": {
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "deleteOption": "Delete",
+            "diskSizeGB": 30,
+            "managedDisk": {
+              "storageAccountType": "Premium_LRS"
+            },
+            "osType": "Linux"
+          }
+        }
+      },
+      "type": "Microsoft.Compute/virtualMachines"
+    },
+    {
+      "apiVersion": "2020-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_VM1_nsg_name'))]"
+      ],
+      "name": "[concat(parameters('networkSecurityGroups_VM1_nsg_name'), '/SSH')]",
+      "properties": {
+        "access": "Allow",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationPortRange": "22",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "priority": 300,
+        "protocol": "TCP",
+        "sourceAddressPrefix": "*",
+        "sourceAddressPrefixes": [],
+        "sourcePortRange": "*",
+        "sourcePortRanges": []
+      },
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+    },
+    {
+      "apiVersion": "2020-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_VM2_nsg_name'))]"
+      ],
+      "name": "[concat(parameters('networkSecurityGroups_VM2_nsg_name'), '/SSH')]",
+      "properties": {
+        "access": "Allow",
+        "destinationAddressPrefix": "*",
+        "destinationAddressPrefixes": [],
+        "destinationPortRange": "22",
+        "destinationPortRanges": [],
+        "direction": "Inbound",
+        "priority": 300,
+        "protocol": "TCP",
+        "sourceAddressPrefix": "*",
+        "sourceAddressPrefixes": [],
+        "sourcePortRange": "*",
+        "sourcePortRanges": []
+      },
+      "type": "Microsoft.Network/networkSecurityGroups/securityRules"
+    },
+    {
+      "apiVersion": "2020-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_VNet1_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_VNet1_name'), '/default')]",
+      "properties": {
+        "addressPrefix": "10.1.0.0/24",
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled"
+      },
+      "type": "Microsoft.Network/virtualNetworks/subnets"
+    },
+    {
+      "apiVersion": "2020-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_VNet2_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_VNet2_name'), '/default')]",
+      "properties": {
+        "addressPrefix": "10.4.0.0/27",
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled"
+      },
+      "type": "Microsoft.Network/virtualNetworks/subnets"
+    },
+    {
+      "apiVersion": "2020-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_VNet1_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_VNet1_name'), '/GatewaySubnet')]",
+      "properties": {
+        "addressPrefix": "10.1.1.0/27",
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled"
+      },
+      "type": "Microsoft.Network/virtualNetworks/subnets"
+    },
+    {
+      "apiVersion": "2020-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_VNet2_name'))]"
+      ],
+      "name": "[concat(parameters('virtualNetworks_VNet2_name'), '/GatewaySubnet')]",
+      "properties": {
+        "addressPrefix": "10.4.1.0/24",
+        "delegations": [],
+        "privateEndpointNetworkPolicies": "Enabled",
+        "privateLinkServiceNetworkPolicies": "Enabled"
+      },
+      "type": "Microsoft.Network/virtualNetworks/subnets"
+    },
+    {
+      "apiVersion": "2020-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworkGateways', parameters('virtualNetworkGateways_VNet1GW_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworkGateways', parameters('virtualNetworkGateways_VNet2GW_name'))]"
+      ],
+      "location": "eastus",
+      "name": "[parameters('connections_VNet1_VNet2_name')]",
+      "properties": {
+        "connectionMode": "Default",
+        "connectionProtocol": "IKEv2",
+        "connectionType": "Vnet2Vnet",
+        "dpdTimeoutSeconds": 0,
+        "enableBgp": true,
+        "expressRouteGatewayBypass": false,
+        "ipsecPolicies": [],
+        "routingWeight": 0,
+        "sharedKey": "s3cur3keys",
+        "trafficSelectorPolicies": [],
+        "useLocalAzureIpAddress": false,
+        "usePolicyBasedTrafficSelectors": false,
+        "virtualNetworkGateway1": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworkGateways', parameters('virtualNetworkGateways_VNet1GW_name'))]"
+        },
+        "virtualNetworkGateway2": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworkGateways', parameters('virtualNetworkGateways_VNet2GW_name'))]"
+        }
+      },
+      "type": "Microsoft.Network/connections"
+    },
+    {
+      "apiVersion": "2020-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworkGateways', parameters('virtualNetworkGateways_VNet2GW_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworkGateways', parameters('virtualNetworkGateways_VNet1GW_name'))]"
+      ],
+      "location": "uksouth",
+      "name": "[parameters('connections_VNet2_VNet1_name')]",
+      "properties": {
+        "connectionMode": "Default",
+        "connectionProtocol": "IKEv2",
+        "connectionType": "Vnet2Vnet",
+        "dpdTimeoutSeconds": 0,
+        "enableBgp": true,
+        "expressRouteGatewayBypass": false,
+        "ipsecPolicies": [],
+        "routingWeight": 0,
+        "sharedKey": "s3cur3k3ys",
+        "trafficSelectorPolicies": [],
+        "useLocalAzureIpAddress": false,
+        "usePolicyBasedTrafficSelectors": false,
+        "virtualNetworkGateway1": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworkGateways', parameters('virtualNetworkGateways_VNet2GW_name'))]"
+        },
+        "virtualNetworkGateway2": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworkGateways', parameters('virtualNetworkGateways_VNet1GW_name'))]"
+        }
+      },
+      "type": "Microsoft.Network/connections"
+    },
+    {
+      "apiVersion": "2020-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_VNet1GWpip_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_VNet1_name'), 'GatewaySubnet')]"
+      ],
+      "location": "eastus",
+      "name": "[parameters('virtualNetworkGateways_VNet1GW_name')]",
+      "properties": {
+        "activeActive": false,
+        "bgpSettings": {
+          "asn": 65515,
+          "bgpPeeringAddress": "10.1.1.30",
+          "bgpPeeringAddresses": [
+            {
+              "customBgpIpAddresses": [],
+              "ipconfigurationId": "[concat(resourceId('Microsoft.Network/virtualNetworkGateways', parameters('virtualNetworkGateways_VNet1GW_name')), '/ipConfigurations/default')]"
+            }
+          ],
+          "peerWeight": 0
+        },
+        "enableBgp": true,
+        "enablePrivateIpAddress": false,
+        "gatewayType": "Vpn",
+        "ipConfigurations": [
+          {
+            "name": "default",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_VNet1GWpip_name'))]"
+              },
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_VNet1_name'), 'GatewaySubnet')]"
+              }
+            }
+          }
+        ],
+        "sku": {
+          "name": "VpnGw2",
+          "tier": "VpnGw2"
+        },
+        "vpnClientConfiguration": {
+          "radiusServers": [],
+          "vpnAuthenticationTypes": [],
+          "vpnClientIpsecPolicies": [],
+          "vpnClientProtocols": [
+            "OpenVPN",
+            "IkeV2"
+          ],
+          "vpnClientRevokedCertificates": [],
+          "vpnClientRootCertificates": []
+        },
+        "vpnGatewayGeneration": "Generation2",
+        "vpnType": "RouteBased"
+      },
+      "type": "Microsoft.Network/virtualNetworkGateways"
+    },
+    {
+      "apiVersion": "2020-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_VNet2GWpip_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_VNet2_name'), 'GatewaySubnet')]"
+      ],
+      "location": "uksouth",
+      "name": "[parameters('virtualNetworkGateways_VNet2GW_name')]",
+      "properties": {
+        "activeActive": false,
+        "bgpSettings": {
+          "asn": 65516,
+          "bgpPeeringAddress": "10.4.1.254",
+          "bgpPeeringAddresses": [
+            {
+              "customBgpIpAddresses": [],
+              "ipconfigurationId": "[concat(resourceId('Microsoft.Network/virtualNetworkGateways', parameters('virtualNetworkGateways_VNet2GW_name')), '/ipConfigurations/default')]"
+            }
+          ],
+          "peerWeight": 0
+        },
+        "enableBgp": true,
+        "enablePrivateIpAddress": false,
+        "gatewayType": "Vpn",
+        "ipConfigurations": [
+          {
+            "name": "default",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_VNet2GWpip_name'))]"
+              },
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_VNet2_name'), 'GatewaySubnet')]"
+              }
+            }
+          }
+        ],
+        "sku": {
+          "name": "VpnGw2",
+          "tier": "VpnGw2"
+        },
+        "vpnClientConfiguration": {
+          "radiusServers": [],
+          "vpnAuthenticationTypes": [],
+          "vpnClientIpsecPolicies": [],
+          "vpnClientProtocols": [
+            "OpenVPN",
+            "IkeV2"
+          ],
+          "vpnClientRevokedCertificates": [],
+          "vpnClientRootCertificates": []
+        },
+        "vpnGatewayGeneration": "Generation2",
+        "vpnType": "RouteBased"
+      },
+      "type": "Microsoft.Network/virtualNetworkGateways"
+    },
+    {
+      "apiVersion": "2020-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_VM1_ip_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_VNet1_name'), 'default')]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_VM1_nsg_name'))]"
+      ],
+      "location": "eastus",
+      "name": "[parameters('networkInterfaces_vm1929_name')]",
+      "properties": {
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableAcceleratedNetworking": true,
+        "enableIPForwarding": false,
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "primary": true,
+              "privateIPAddress": "10.1.0.4",
+              "privateIPAddressVersion": "IPv4",
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_VM1_ip_name'))]"
+              },
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_VNet1_name'), 'default')]"
+              }
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_VM1_nsg_name'))]"
+        }
+      },
+      "type": "Microsoft.Network/networkInterfaces"
+    },
+    {
+      "apiVersion": "2020-11-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_VM2_ip_name'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_VNet2_name'), 'default')]",
+        "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_VM2_nsg_name'))]"
+      ],
+      "location": "uksouth",
+      "name": "[parameters('networkInterfaces_vm2645_name')]",
+      "properties": {
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableAcceleratedNetworking": true,
+        "enableIPForwarding": false,
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "primary": true,
+              "privateIPAddress": "10.4.0.4",
+              "privateIPAddressVersion": "IPv4",
+              "privateIPAllocationMethod": "Dynamic",
+              "publicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_VM2_ip_name'))]"
+              },
+              "subnet": {
+                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_VNet2_name'), 'default')]"
+              }
+            }
+          }
+        ],
+        "networkSecurityGroup": {
+          "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_VM2_nsg_name'))]"
+        }
+      },
+      "type": "Microsoft.Network/networkInterfaces"
+    }
+  ],
+  "variables": {}
+}

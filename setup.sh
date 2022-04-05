@@ -25,7 +25,7 @@ az network lb rule create \
     --name webLoadBalancerRule \
     --protocol tcp \
     --frontend-port 80 \
-    --backend-port 80 \
+    --backend-port 443 \
     --frontend-ip-name webFrontEndPool \
     --backend-pool-name webBackEndPool \
     --probe-name webHealthProbe

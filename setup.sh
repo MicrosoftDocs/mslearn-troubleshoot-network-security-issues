@@ -79,8 +79,12 @@ az vm create \
     --image UbuntuLTS \
     --admin-username azureuser \
     --generate-ssh-keys \
-    --custom-data cloud-init.txt \
-    --no-wait
+    --custom-data cloud-init.txt
+
+az vm open-port \
+  --port 80 \
+  --resource-group $resource \
+  --name webVirtualMachine1
 
 az vm create \
     --resource-group $resource \
@@ -90,7 +94,11 @@ az vm create \
     --image UbuntuLTS \
     --admin-username azureuser \
     --generate-ssh-keys \
-    --custom-data cloud-init.txt \
-    --no-wait
+    --custom-data cloud-init.txt
+    
+az vm open-port \
+  --port 80 \
+  --resource-group $resource \
+  --name webVirtualMachine2
 
 printf "***********************  Webserver Pool Created  *********************\n\n"
